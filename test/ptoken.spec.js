@@ -1,7 +1,6 @@
 const { expect } = require("chai");
 
 describe("PToken", function() {
-  let provider;
   let user;
   let PToken;
 
@@ -9,7 +8,7 @@ describe("PToken", function() {
   const twoEth = ethers.utils.parseEther("2");
 
   beforeEach(async () => {
-    provider = waffle.provider;
+    const provider = waffle.provider;
     [owner, user] = await provider.getWallets();
 
     const PTokenFactory = await ethers.getContractFactory("PToken");
