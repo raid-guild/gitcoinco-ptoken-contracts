@@ -11,12 +11,12 @@ async function main() {
   // await bre.run('compile');
 
   // We get the contract to deploy
-  const PToken = await ethers.getContractFactory("PToken");
-  const ptoken = await PToken.deploy("My Token", "MYTOKE", "1000000000000000000", "1000000000000000000");
+  const PTokenFactory = await ethers.getContractFactory("PToken");
+  const PToken = await PTokenFactory.deploy("My Token", "MYTOKE", "1000000000000000000", "1000000000000000000");
 
-  await ptoken.deployed();
+  await PToken.deployed();
 
-  console.log("PToken deployed to:", ptoken.address);
+  console.log("PToken deployed to:", PToken.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
