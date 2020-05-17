@@ -17,6 +17,8 @@ contract PToken is ERC20, Ownable {
 
     event Redeemed(PToken token, address seller, uint256 amountRedeemed);
 
+    event CostUpdated(PToken token, address owner, uint256 newCost);
+
     event Minted(PToken token, address owner, uint256 amountMinted);
 
     event Burned(PToken token, address owner, uint256 amountBurned);
@@ -28,31 +30,37 @@ contract PToken is ERC20, Ownable {
         emit Initialized(this, msg.sender, _cost, _initialSupply);
     }
 
-    function purchase(uint256 amount) public payable {
-        require(msg.value == cost.mul(amount.div(10**18)), "PToken: Incorrect value sent");
+    function purchase(uint256 _amount) public payable {
+        require(msg.value == cost.mul(_amount.div(10**18)), "PToken: Incorrect value sent");
 
         address payable owner = payable(owner());
         owner.transfer(msg.value);
-        this.transfer(msg.sender, amount);
+        this.transfer(msg.sender, _amount);
 
-        emit Purchased(this, msg.sender, msg.value, amount);
+        emit Purchased(this, msg.sender, msg.value, _amount);
     }
 
-    function redeem(uint256 amount) public {
-        transfer(address(this), amount);
+    function redeem(uint256 _amount) public {
+        transfer(address(this), _amount);
 
-        emit Redeemed(this, msg.sender, amount);
+        emit Redeemed(this, msg.sender, _amount);
     }
 
-    function mint(uint256 amount) public onlyOwner {
-        _mint(address(this), amount);
+    function updateCost(uint256 _newCost) public onlyOwner {
+        cost = _newCost;
 
-        emit Minted(this, msg.sender, amount);
+        emit CostUpdated(this, msg.sender, _newCost);
     }
 
-    function burn(uint256 amount) public onlyOwner {
-        _burn(address(this), amount);
+    function mint(uint256 _amount) public onlyOwner {
+        _mint(address(this), _amount);
 
-        emit Burned(this, msg.sender, amount);
+        emit Minted(this, msg.sender, _amount);
+    }
+
+    function burn(uint256 _amount) public onlyOwner {
+        _burn(address(this), _amount);
+
+        emit Burned(this, msg.sender, _amount);
     }
 }

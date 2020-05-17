@@ -22,22 +22,34 @@ describe("PToken", function() {
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
   });
 
-  it("should allow purchase and redemption of tokens", async function() {
+  it("should allow users to purchase and redeem tokens", async function() {
     // Purchase 1 PToken for 1 ETH as user (not owner)
     await PToken.connect(user).purchase(oneEth, {
       value: oneEth
     });
 
-    // Pool balance should drop by 1 and user balance should increase by 1
+    // Pool balance should drop by 1 and user balance should increase by oneEth
     expect(await PToken.balanceOf(PToken.address)).to.eq(0);
     expect(await PToken.balanceOf(user.address)).to.eq(oneEth);
 
     // Redeem 1 PToken as user (not owner)
     await PToken.connect(user).redeem(oneEth);
 
-    // Pool balance should increase by 1 and user balance should decrease by 1
+    // Pool balance should increase by 1 and user balance should decrease by oneEth
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
     expect(await PToken.balanceOf(user.address)).to.eq(0);
+  });
+
+  it("should allow only the owner to update cost", async function() {
+    expect(await PToken.cost()).to.eq(oneEth);
+
+    // Try to update cost of token as user (not owner), cost should remain same
+    expect(PToken.connect(user).updateCost(twoEth)).to.be.revertedWith('Ownable: caller is not the owner');
+    expect(await PToken.cost()).to.eq(oneEth);
+
+    // Update cost as owner, cost should update to twoEth
+    await PToken.updateCost(twoEth);
+    expect(await PToken.cost()).to.eq(twoEth);
   });
 
   it("should allow only the owner to mint tokens to the pool", async function() {
@@ -47,7 +59,7 @@ describe("PToken", function() {
     expect(PToken.connect(user).mint(oneEth)).to.be.revertedWith('Ownable: caller is not the owner');
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
 
-    // Mint tokens as owner, balance should decrease by 1
+    // Mint tokens as owner, balance should decrease by oneEth
     await PToken.mint(oneEth);
     expect(await PToken.balanceOf(PToken.address)).to.eq(twoEth);
   });
@@ -59,7 +71,7 @@ describe("PToken", function() {
     expect(PToken.connect(user).burn(oneEth)).to.be.revertedWith('Ownable: caller is not the owner');
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
 
-    // Burn tokens as owner, balance should decrease by 1
+    // Burn tokens as owner, balance should decrease by oneEth
     await PToken.burn(oneEth);
     expect(await PToken.balanceOf(PToken.address)).to.eq(0);
   });
