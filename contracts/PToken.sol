@@ -29,7 +29,7 @@ contract PToken is ERC20, Ownable {
     }
 
     function purchase(uint256 amount) public payable {
-        require(msg.value == cost.mul(amount.div(10**18)));
+        require(msg.value == cost.mul(amount.div(10**18)), "PToken: Incorrect value sent");
 
         address payable owner = payable(owner());
         owner.transfer(msg.value);

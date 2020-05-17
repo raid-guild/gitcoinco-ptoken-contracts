@@ -6,6 +6,7 @@ describe("PToken", function() {
   let PToken;
 
   const oneEth = ethers.utils.parseEther("1");
+  const twoEth = ethers.utils.parseEther("2");
 
   beforeEach(async () => {
     provider = waffle.provider;
@@ -37,6 +38,18 @@ describe("PToken", function() {
     // Pool balance should increase by 1 and user balance should decrease by 1
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
     expect(await PToken.balanceOf(user.address)).to.eq(0);
+  });
+
+  it("should allow only the owner to mint tokens to the pool", async function() {
+    expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
+    
+    // Try to mint pool tokens as user (not owner), balance should remain same
+    expect(PToken.connect(user).mint(oneEth)).to.be.revertedWith('Ownable: caller is not the owner');
+    expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
+
+    // Mint tokens as owner, balance should decrease by 1
+    await PToken.mint(oneEth);
+    expect(await PToken.balanceOf(PToken.address)).to.eq(twoEth);
   });
 
   it("should allow only the owner to burn tokens from the pool", async function() {
