@@ -1,0 +1,53 @@
+const { expect } = require("chai");
+
+describe("PToken", function() {
+  let provider;
+  let user;
+  let PToken;
+
+  const oneEth = ethers.utils.parseEther("1");
+
+  beforeEach(async () => {
+    provider = waffle.provider;
+    [owner, user] = await provider.getWallets();
+
+    const PTokenFactory = await ethers.getContractFactory("PToken");
+    PToken = await PTokenFactory.deploy("My Token", "MYTOKE", oneEth, oneEth);
+    
+    await PToken.deployed();
+
+    // Check that PToken was deployed as expected
+    expect(PToken.address).to.properAddress;
+    expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
+  });
+
+  it("should allow purchase and redemption of tokens", async function() {
+    // Purchase 1 PToken for 1 ETH as user (not owner)
+    await PToken.connect(user).purchase(oneEth, {
+      value: oneEth
+    });
+
+    // Pool balance should drop by 1 and user balance should increase by 1
+    expect(await PToken.balanceOf(PToken.address)).to.eq(0);
+    expect(await PToken.balanceOf(user.address)).to.eq(oneEth);
+
+    // Redeem 1 PToken as user (not owner)
+    await PToken.connect(user).redeem(oneEth);
+
+    // Pool balance should increase by 1 and user balance should decrease by 1
+    expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
+    expect(await PToken.balanceOf(user.address)).to.eq(0);
+  });
+
+  it("should allow only the owner to burn tokens from the pool", async function() {
+    expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
+    
+    // Try to burn pool tokens as user (not owner), balance should remain same
+    expect(PToken.connect(user).burn(oneEth)).to.be.revertedWith('Ownable: caller is not the owner');
+    expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
+
+    // Burn tokens as owner, balance should decrease by 1
+    await PToken.burn(oneEth);
+    expect(await PToken.balanceOf(PToken.address)).to.eq(0);
+  });
+});
