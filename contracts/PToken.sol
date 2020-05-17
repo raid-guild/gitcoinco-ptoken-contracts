@@ -11,7 +11,7 @@ contract PToken is ERC20, Ownable {
 
     uint256 public cost;
 
-    event Initialized(PToken token, uint256 cost, uint256 supply);
+    event Initialized(PToken token, address owner, uint256 cost, uint256 supply);
 
     event Purchased(PToken token, address buyer, uint256 amountPaid, uint256 amountReceived);
 
@@ -25,7 +25,7 @@ contract PToken is ERC20, Ownable {
         cost = _cost;
         _mint(address(this), _initialSupply);
 
-        emit Initialized(this, _cost, _initialSupply);
+        emit Initialized(this, msg.sender, _cost, _initialSupply);
     }
 
     function purchase(uint256 amount) public payable {

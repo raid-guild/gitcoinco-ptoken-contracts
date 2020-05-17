@@ -18,6 +18,7 @@ describe("PToken", function() {
 
     // Check that PToken was deployed as expected
     expect(PToken.address).to.properAddress;
+    expect(await PToken.owner()).to.eq(owner.address);
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
   });
 
