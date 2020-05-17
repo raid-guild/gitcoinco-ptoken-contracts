@@ -28,14 +28,14 @@ describe("PToken", function() {
       value: oneEth
     });
 
-    // Pool balance should drop by 1 and user balance should increase by oneEth
+    // Pool balance should drop by 1 and user balance should increase by 1
     expect(await PToken.balanceOf(PToken.address)).to.eq(0);
     expect(await PToken.balanceOf(user.address)).to.eq(oneEth);
 
     // Redeem 1 PToken as user (not owner)
     await PToken.connect(user).redeem(oneEth);
 
-    // Pool balance should increase by 1 and user balance should decrease by oneEth
+    // Pool balance should increase by 1 and user balance should decrease by 1
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
     expect(await PToken.balanceOf(user.address)).to.eq(0);
   });
@@ -47,7 +47,7 @@ describe("PToken", function() {
     expect(PToken.connect(user).updateCost(twoEth)).to.be.revertedWith('Ownable: caller is not the owner');
     expect(await PToken.cost()).to.eq(oneEth);
 
-    // Update cost as owner, cost should update to twoEth
+    // Update cost as owner, cost should update to 2
     await PToken.updateCost(twoEth);
     expect(await PToken.cost()).to.eq(twoEth);
   });
@@ -59,7 +59,7 @@ describe("PToken", function() {
     expect(PToken.connect(user).mint(oneEth)).to.be.revertedWith('Ownable: caller is not the owner');
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
 
-    // Mint tokens as owner, balance should decrease by oneEth
+    // Mint tokens as owner, balance should decrease by 1
     await PToken.mint(oneEth);
     expect(await PToken.balanceOf(PToken.address)).to.eq(twoEth);
   });
@@ -71,7 +71,7 @@ describe("PToken", function() {
     expect(PToken.connect(user).burn(oneEth)).to.be.revertedWith('Ownable: caller is not the owner');
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
 
-    // Burn tokens as owner, balance should decrease by oneEth
+    // Burn tokens as owner, balance should decrease by 1
     await PToken.burn(oneEth);
     expect(await PToken.balanceOf(PToken.address)).to.eq(0);
   });
