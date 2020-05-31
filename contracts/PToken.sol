@@ -23,7 +23,12 @@ contract PToken is ERC20, Ownable {
 
     event Burned(PToken token, address owner, uint256 amountBurned);
 
-    constructor(string memory _name, string memory _symbol, uint256 _cost, uint256 _initialSupply) ERC20(_name, _symbol) public {
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        uint256 _cost,
+        uint256 _initialSupply
+    ) ERC20(_name, _symbol) public {
         cost = _cost;
         _mint(address(this), _initialSupply);
 

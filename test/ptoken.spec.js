@@ -1,3 +1,4 @@
+const PTokenArtifact = require("../artifacts/PToken.json");
 const { expect } = require("chai");
 
 describe("PToken", function() {
@@ -11,10 +12,18 @@ describe("PToken", function() {
     const provider = waffle.provider;
     [owner, user] = await provider.getWallets();
 
-    const PTokenFactory = await ethers.getContractFactory("PToken");
-    PToken = await PTokenFactory.deploy("My Token", "MYTOKE", oneEth, oneEth);
-    
-    await PToken.deployed();
+    const PTokenFactoryFactory = await ethers.getContractFactory("PTokenFactory");
+    const PTokenFactory = await PTokenFactoryFactory.deploy();
+    await PTokenFactory.deployed();
+
+    const tx = await PTokenFactory.createPToken("My Token", "MYTOKE", oneEth, oneEth);
+    const receipt = await tx.wait();
+
+    PToken = await new ethers.Contract(
+      receipt.events.pop().args.tokenAddress,
+      PTokenArtifact.abi,
+      provider
+    );
 
     // Check that PToken was deployed as expected
     expect(PToken.address).to.properAddress;
@@ -48,7 +57,7 @@ describe("PToken", function() {
     expect(await PToken.cost()).to.eq(oneEth);
 
     // Update cost as owner, cost should update to 2
-    await PToken.updateCost(twoEth);
+    await PToken.connect(owner).updateCost(twoEth);
     expect(await PToken.cost()).to.eq(twoEth);
   });
 
@@ -60,7 +69,7 @@ describe("PToken", function() {
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
 
     // Mint tokens as owner, balance should decrease by 1
-    await PToken.mint(oneEth);
+    await PToken.connect(owner).mint(oneEth);
     expect(await PToken.balanceOf(PToken.address)).to.eq(twoEth);
   });
 
@@ -72,7 +81,7 @@ describe("PToken", function() {
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneEth);
 
     // Burn tokens as owner, balance should decrease by 1
-    await PToken.burn(oneEth);
+    await PToken.connect(owner).burn(oneEth);
     expect(await PToken.balanceOf(PToken.address)).to.eq(0);
   });
 });
