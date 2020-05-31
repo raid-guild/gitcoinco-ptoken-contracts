@@ -5,14 +5,14 @@ import "./PToken.sol";
 contract PTokenFactory {
     mapping (address => PToken) userPTokens;
 
-    event NewPToken(PToken tokenAddress);
+    event NewPToken(PToken token);
 
     function createPToken(
         string memory _name,
         string memory _symbol,
         uint256 _cost,
         uint256 _supply
-    ) public returns (PToken) {
+    ) public {
         require(address(userPTokens[msg.sender]) == address(0), "PToken: User token already exists");
 
         userPTokens[msg.sender] = new PToken(_name, _symbol, _cost, _supply);

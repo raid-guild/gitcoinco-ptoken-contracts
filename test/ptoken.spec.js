@@ -20,7 +20,7 @@ describe("PToken", function() {
     const receipt = await tx.wait();
 
     PToken = await new ethers.Contract(
-      receipt.events.pop().args.tokenAddress,
+      receipt.events.pop().args.token,
       PTokenArtifact.abi,
       provider
     );
