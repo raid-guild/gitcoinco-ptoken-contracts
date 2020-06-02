@@ -11,12 +11,24 @@ async function main() {
   // await bre.run('compile');
 
   // We get the contract to deploy
-  const PTokenFactory = await ethers.getContractFactory("PToken");
-  const PToken = await PTokenFactory.deploy("My Token", "MYTOKE", "1000000000000000000", "1000000000000000000");
+  const PTokenFactoryFactory = await ethers.getContractFactory("PTokenFactory");
+  const PTokenFactory = await PTokenFactoryFactory.deploy();
+  await PTokenFactory.deployed();
 
-  await PToken.deployed();
+  console.log("PTokenFactory deployed to:", PTokenFactory.address);
 
-  console.log("PToken deployed to:", PToken.address);
+  if (bre.network.name === "localhost") {
+    const MockDAIFactory = await ethers.getContractFactory("MockDAI");
+    const MockDAI = await MockDAIFactory.deploy();
+    await MockDAI.deployed();
+    console.log("MockDAI deployed to:", MockDAI.address);
+
+    // Drip the owner one DAI
+    await MockDAI.faucet();
+    const owner = await new ethers.Wallet(bre.network.config.accounts[0]);
+    const balance = await MockDAI.balanceOf(owner.address);
+    console.log("Owner's MockDAI balance:", ethers.utils.formatEther(balance));
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere

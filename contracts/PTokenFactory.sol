@@ -11,11 +11,12 @@ contract PTokenFactory {
         string memory _name,
         string memory _symbol,
         uint256 _cost,
-        uint256 _supply
+        uint256 _supply,
+        address _acceptedERC20
     ) public {
         require(address(userPTokens[msg.sender]) == address(0), "PToken: User token already exists");
 
-        userPTokens[msg.sender] = new PToken(_name, _symbol, _cost, _supply);
+        userPTokens[msg.sender] = new PToken(_name, _symbol, _cost, _supply, _acceptedERC20);
         userPTokens[msg.sender].transferOwnership(msg.sender);
 
         emit NewPToken(userPTokens[msg.sender]);
