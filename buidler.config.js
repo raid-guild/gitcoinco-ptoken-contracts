@@ -1,3 +1,4 @@
+require("dotenv").config();
 usePlugin("@nomiclabs/buidler-waffle");
 
 // This is a sample Buidler task. To learn how to create your own go to
@@ -17,15 +18,28 @@ task("accounts", "Prints the list of accounts", async () => {
 module.exports = {
   // This is a sample solc configuration that specifies which version of solc to use
   solc: {
-    version: "0.6.8",
+    version: "0.6.7",
   },
   networks: {
     localhost: {
-      url: 'http://localhost:8545',
+      url: "http://localhost:8545",
       accounts: {
-        0: "0x91938cb45eb51f9480246b3c88d82ff6a830f3328d3237997d8bb0210c07cb24",
-        mnemonic: "rent where reveal first bunker hazard among strong idea risk life left"
-      }
-    }
-  }
+        mnemonic: process.env.MNEMONIC_RINKEBY,
+      },
+    },
+    rinkeby: {
+      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_ID}`,
+      chainId: 4,
+      accounts: {
+        mnemonic: process.env.MNEMONIC_RINKEBY,
+      },
+    },
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
+      chainId: 1,
+      accounts: {
+        mnemonic: process.env.MNEMONIC_MAINNET,
+      },
+    },
+  },
 };

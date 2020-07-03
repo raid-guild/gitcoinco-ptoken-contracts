@@ -1,4 +1,8 @@
+.env
 node_modules
+
+# slither-flat puts flattended *.sol files here
+crytic-export
 
 #Buidler files
 cache
