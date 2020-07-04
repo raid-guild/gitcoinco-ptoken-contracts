@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -38,7 +39,7 @@ contract PToken is ERC20, Ownable {
 
     function purchase(uint256 _amount) public {
         uint256 _allowance = acceptedToken.allowance(msg.sender, address(this));
-        uint256 _cost = price.mul(_amount.div(10**18));
+        uint256 _cost = price.mul(_amount).div(10**18);
         require(_allowance >= _cost, "PToken: Not enough token allowance");
 
         acceptedToken.transferFrom(msg.sender, owner(), _cost);
