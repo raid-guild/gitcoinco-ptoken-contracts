@@ -6,7 +6,7 @@ Smart contracts for Gitcoin personal token functionality
 
 The current personal token factory contracts are deployed on Rinkeby and Mainnet at the addresses below.
 
-- Rinkeby: [0xd936a672B45758Fab7BB3321974a8168285Bc4d0](https://rinkeby.etherscan.io/address/0xd936a672b45758fab7bb3321974a8168285bc4d0)
+- Rinkeby: [0x80D50970599E33d0D5D436A649C25b729666A015](https://rinkeby.etherscan.io/address/0x80D50970599E33d0D5D436A649C25b729666A015)
 - Mainnet: TBD
 
 ## Development
