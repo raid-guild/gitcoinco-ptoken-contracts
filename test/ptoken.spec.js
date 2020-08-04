@@ -24,7 +24,7 @@ describe("PToken", function() {
     await PTokenFactory.deployed();
 
     // Make sure the PToken logic contract was deployed
-    const ptokenLogicAddress = await PTokenFactory.getLogicAddress();
+    const ptokenLogicAddress = await PTokenFactory.ptokenLogic();
     expect(ptokenLogicAddress.startsWith('0x')).to.be.true;
     expect(ptokenLogicAddress.length).to.equal(42);
 

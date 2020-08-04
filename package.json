@@ -7,7 +7,9 @@
     "compile": "npx buidler compile",
     "test": "npx buidler test",
     "deploy-dev": "npm run compile && npx buidler run --network rinkeby scripts/deploy-factory.js",
-    "deploy-prod": "npm run compile && npx buidler run --network mainnet scripts/deploy-factory.js"
+    "deploy-prod": "npm run compile && npx buidler run --network mainnet scripts/deploy-factory.js",
+    "lint": "npx solhint **/*.sol",
+    "prettier": "prettier --write **/*.sol"
   },
   "repository": {
     "type": "git",
@@ -28,6 +30,9 @@
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "ethereum-waffle": "^2.5.0",
-    "ethers": "^4.0.47"
+    "ethers": "^4.0.47",
+    "prettier": "^2.0.5",
+    "prettier-plugin-solidity": "^1.0.0-alpha.55",
+    "solhint": "^3.1.0"
   }
 }
