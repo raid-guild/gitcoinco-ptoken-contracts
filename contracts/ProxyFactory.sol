@@ -1,7 +1,6 @@
-pragma solidity ^0.6.0;
+pragma solidity ^0.6.7;
 
 contract ProxyFactory {
-
   /**
    * @dev This function enables deployment of EIP-1167 minimal proxies. The code below
    * was copied from the OpenZeppelin ProxyFactory.sol contract, as there is currently
@@ -28,10 +27,9 @@ contract ProxyFactory {
       proxy := create(0, clone, 0x37)
     }
 
-    if(_data.length > 0) {
-      (bool success,) = proxy.call(_data);
+    if (_data.length > 0) {
+      (bool success, ) = proxy.call(_data);
       require(success, "ProxyFactory: Initialization of proxy failed");
     }
   }
-
 }
