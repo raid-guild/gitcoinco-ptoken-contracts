@@ -1,6 +1,6 @@
 # Gitcoin Personal Tokens Contracts
 
-Smart contracts for Gitcoin personal token functionality
+Smart contracts for Gitcoin personal token functionality.
 
 ## Deployed Contracts
 
