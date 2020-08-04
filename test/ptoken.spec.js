@@ -18,9 +18,15 @@ describe("PToken", function() {
     // Faucet the user (not owner) one DAI
     await MockDAI.connect(user).faucet();
 
+    // Deploy our factory contract, which also deploys the logic contract
     const PTokenFactoryFactory = await ethers.getContractFactory("PTokenFactory");
     const PTokenFactory = await PTokenFactoryFactory.deploy();
     await PTokenFactory.deployed();
+
+    // Make sure the PToken logic contract was deployed
+    const ptokenLogicAddress = await PTokenFactory.getLogicAddress();
+    expect(ptokenLogicAddress.startsWith('0x')).to.be.true;
+    expect(ptokenLogicAddress.length).to.equal(42);
 
     const tx = await PTokenFactory.createPToken("My Token", "MYTOKE", oneDai, oneDai, MockDAI.address);
     const receipt = await tx.wait();

@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.6.0;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol";
 
-contract PToken is ERC20, Ownable {
+contract PToken is ERC20UpgradeSafe, OwnableUpgradeSafe {
     using SafeMath for uint256;
 
-    ERC20 acceptedToken;  // ERC20 that is used for purchasing pToken
+    IERC20 acceptedToken;  // ERC20 that is used for purchasing pToken
     uint256 public price; // The amount of aToken to purchase pToken
 
     event Initialized(address owner, uint256 price, uint256 supply);
@@ -23,14 +22,16 @@ contract PToken is ERC20, Ownable {
 
     event Burned(address owner, uint256 amountBurned);
 
-    constructor(
+    function initializePtoken(
         string memory _name,
         string memory _symbol,
         uint256 _price,
         uint256 _initialSupply,
         address _acceptedERC20
-    ) ERC20(_name, _symbol) public {
-        acceptedToken = ERC20(_acceptedERC20);
+    ) public initializer {
+        OwnableUpgradeSafe.__Ownable_init();
+        ERC20UpgradeSafe.__ERC20_init(_name, _symbol);
+        acceptedToken = IERC20(_acceptedERC20);
         price = _price;
         _mint(address(this), _initialSupply);
 
