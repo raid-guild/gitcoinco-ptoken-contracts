@@ -2,10 +2,12 @@
 pragma solidity ^0.6.7;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol";
 
 contract PToken is ERC20UpgradeSafe, OwnableUpgradeSafe {
   using SafeMath for uint256;
+  using SafeERC20 for IERC20;
 
   IERC20 public acceptedToken; // ERC20 that is used for purchasing pToken
   uint256 public price; // The amount of aToken to purchase pToken
@@ -43,14 +45,14 @@ contract PToken is ERC20UpgradeSafe, OwnableUpgradeSafe {
     uint256 _cost = price.mul(_amount).div(10**18);
     require(_allowance >= _cost, "PToken: Not enough token allowance");
 
-    acceptedToken.transferFrom(msg.sender, owner(), _cost);
-    this.transfer(msg.sender, _amount);
+    acceptedToken.safeTransferFrom(msg.sender, owner(), _cost);
+    require(this.transfer(msg.sender, _amount), "PToken: Transfer during purchase failed");
 
     emit Purchased(msg.sender, _cost, _amount);
   }
 
   function redeem(uint256 _amount) public {
-    transfer(address(this), _amount);
+    require(transfer(address(this), _amount), "PToken: Transfer during redemption failed");
 
     emit Redeemed(msg.sender, _amount);
   }
