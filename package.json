@@ -9,7 +9,7 @@
     "deploy-dev": "npm run compile && npx buidler run --network rinkeby scripts/deploy-factory.js",
     "deploy-prod": "npm run compile && npx buidler run --network mainnet scripts/deploy-factory.js",
     "lint": "npx solhint **/*.sol",
-    "prettier": "prettier --write **/*.sol"
+    "prettier": "prettier --write ."
   },
   "repository": {
     "type": "git",
