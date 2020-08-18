@@ -31,8 +31,8 @@ contract PToken is ERC20UpgradeSafe, OwnableUpgradeSafe {
     uint256 _initialSupply,
     address _acceptedERC20
   ) public initializer {
-    OwnableUpgradeSafe.__Ownable_init();
-    ERC20UpgradeSafe.__ERC20_init(_name, _symbol);
+    __Ownable_init();
+    __ERC20_init(_name, _symbol);
     acceptedToken = IERC20(_acceptedERC20);
     price = _price;
     _mint(address(this), _initialSupply);

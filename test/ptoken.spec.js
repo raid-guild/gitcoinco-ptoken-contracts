@@ -4,8 +4,6 @@ const { expect } = require("chai");
 describe("PToken", function() {
   const oneDai = ethers.utils.parseEther("1");
   const twoDai = ethers.utils.parseEther("2");
-  // const redDai = ethers.utils.parseEther("red");
-  // const blueDai = ethers.utils.parseEther("blue");
 
   beforeEach(async () => {
     const provider = waffle.provider;
@@ -43,10 +41,53 @@ describe("PToken", function() {
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneDai);
   });
 
-  it("should allow users to purchase and redeem tokens", async function() {
+  it('does not allow the initialize function to be called twice', async () => {
+    // It was called once in the constructor
+    expect(
+      PToken.connect(user).initializePtoken('My Token', 'MYTOKE', oneDai, oneDai, MockDAI.address)
+    ).to.be.revertedWith('Contract instance has already been initialized');
+  });
+
+  it('does not let user purchase more tokens than the available amount', async () => {
+    // Purchase 1 PToken for 1 DAI as user (not owner)
+    const supply = await PToken.totalSupply();
+    const amount = supply.add('1');
+    await MockDAI.connect(user).approve(PToken.address, amount);
+    expect(PToken.connect(user).purchase(amount)).to.be.revertedWith(
+      'SafeERC20: low-level call failed'
+    );
+  })
+  
+  it('informs user if they have insufficient allowance when purchasing', async () => {
+    // Purchase 1 PToken for 1 DAI as user (not owner)
+    await MockDAI.connect(user).approve(PToken.address, oneDai);
+    expect(PToken.connect(user).purchase(twoDai)).to.be.revertedWith(
+      'PToken: Not enough token allowance'
+    );
+  })
+  
+  it('blocks redemptions if you don\'t own enough tokens', async () => {
+    // Redemption for any amount should fail
+    expect(PToken.connect(user).redeem('1')).to.be.revertedWith(
+      'ERC20: transfer amount exceeds balance'
+    );
+    
     // Purchase 1 PToken for 1 DAI as user (not owner)
     await MockDAI.connect(user).approve(PToken.address, oneDai);
     await PToken.connect(user).purchase(oneDai);
+
+    // Redemption for 2 DAI should fail
+    expect(PToken.connect(user).redeem(twoDai)).to.be.revertedWith(
+      'ERC20: transfer amount exceeds balance'
+    );
+  })
+
+  it("should allow users to purchase and redeem tokens", async function() {
+    // Purchase 1 PToken for 1 DAI as user (not owner)
+    await MockDAI.connect(user).approve(PToken.address, oneDai);
+    await expect(PToken.connect(user).purchase(oneDai))
+      .to.emit(PToken, 'Purchased')
+      .withArgs(user.address, oneDai, oneDai);
 
     // Pool PToken balance should drop by 1 and user balance should increase by 1
     expect(await PToken.balanceOf(PToken.address)).to.eq(0);
@@ -57,7 +98,9 @@ describe("PToken", function() {
     expect(await MockDAI.balanceOf(owner.address)).to.eq(oneDai);
 
     // Redeem 1 PToken as user (not owner)
-    await PToken.connect(user).redeem(oneDai);
+    await expect(PToken.connect(user).redeem(oneDai))
+      .to.emit(PToken, 'Redeemed')
+      .withArgs(user.address, oneDai);
 
     // Pool balance should increase by 1 and user balance should decrease by 1
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneDai);
@@ -72,7 +115,9 @@ describe("PToken", function() {
     expect(await PToken.price()).to.eq(oneDai);
 
     // Update cost as owner, cost should update to 2
-    await PToken.connect(owner).updatePrice(twoDai);
+    await expect(PToken.connect(owner).updatePrice(twoDai))
+      .to.emit(PToken, 'PriceUpdated')
+      .withArgs(owner.address, twoDai);
     expect(await PToken.price()).to.eq(twoDai);
   });
 
@@ -84,7 +129,9 @@ describe("PToken", function() {
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneDai);
 
     // Mint tokens as owner, balance should decrease by 1
-    await PToken.connect(owner).mint(oneDai);
+    await expect(PToken.connect(owner).mint(oneDai))
+      .to.emit(PToken, 'Minted')
+      .withArgs(owner.address, oneDai);
     expect(await PToken.balanceOf(PToken.address)).to.eq(twoDai);
   });
 
@@ -96,7 +143,9 @@ describe("PToken", function() {
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneDai);
 
     // Burn tokens as owner, balance should decrease by 1
-    await PToken.connect(owner).burn(oneDai);
+    await expect(PToken.connect(owner).burn(oneDai))
+      .to.emit(PToken, 'Burned')
+      .withArgs(owner.address, oneDai);
     expect(await PToken.balanceOf(PToken.address)).to.eq(0);
   });
 });
