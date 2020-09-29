@@ -1,5 +1,6 @@
 require("dotenv").config();
 usePlugin("@nomiclabs/buidler-waffle");
+usePlugin("@nomiclabs/buidler-etherscan");
 
 // This is a sample Buidler task. To learn how to create your own go to
 // https://buidler.dev/guides/create-task.html
@@ -16,9 +17,11 @@ task("accounts", "Prints the list of accounts", async () => {
 // defaultNetwork, networks, solc, and paths.
 // Go to https://buidler.dev/config/ to learn more
 module.exports = {
-  // This is a sample solc configuration that specifies which version of solc to use
   solc: {
-    version: "0.6.7",
+    version: "0.6.12",
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY
   },
   networks: {
     localhost: {
@@ -33,6 +36,7 @@ module.exports = {
       accounts: {
         mnemonic: process.env.MNEMONIC_RINKEBY,
       },
+      gasPrice: 1e9,
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
@@ -40,6 +44,7 @@ module.exports = {
       accounts: {
         mnemonic: process.env.MNEMONIC_MAINNET,
       },
+      gasPrice: 80e9,
     },
   },
 };
