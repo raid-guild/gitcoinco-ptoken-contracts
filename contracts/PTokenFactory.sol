@@ -31,14 +31,15 @@ contract PTokenFactory is ProxyFactory {
     require(address(userPTokens[msg.sender]) == address(0), "PToken: User token already exists");
 
     // Deploy PToken contract and call initialization function
-    bytes memory payload = abi.encodeWithSignature(
-      "initializePtoken(string,string,uint256,uint256,address)",
-      _name,
-      _symbol,
-      _cost,
-      _supply,
-      _acceptedERC20
-    );
+    bytes memory payload =
+      abi.encodeWithSignature(
+        "initializePtoken(string,string,uint256,uint256,address)",
+        _name,
+        _symbol,
+        _cost,
+        _supply,
+        _acceptedERC20
+      );
     address newPtokenContract = deployMinimal(ptokenLogic, payload);
 
     // Update state

@@ -1,5 +1,5 @@
-const { expect } = require("chai");
-const PTokenArtifact = require("../artifacts/contracts/PToken.sol/PToken.json");
+const { expect } = require('chai');
+const PTokenArtifact = require('../artifacts/contracts/PToken.sol/PToken.json');
 
 describe('PToken', function () {
   const oneDai = ethers.utils.parseEther('1');

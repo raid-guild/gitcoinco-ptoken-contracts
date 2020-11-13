@@ -4,7 +4,7 @@
   "description": "Smart contracts for Gitcoin personal tokens functionality",
   "main": "index.js",
   "scripts": {
-    "lint": "npx solhint **/*.sol",
+    "lint": "eslint --ext .js,.ts ./; npx solhint **/*.sol",
     "prettier": "prettier --write .",
     "compile": "yarn hardhat compile",
     "test": "yarn hardhat test",
@@ -28,11 +28,25 @@
     "@openzeppelin/contracts": "^3.0.1",
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
+    "eslint-config-prettier": "^6.15.0",
     "ethereum-waffle": "^3.2.0",
     "ethers": "^5.0.19",
     "hardhat": "^2.0.3",
-    "prettier-plugin-solidity": "^1.0.0-alpha.55",
-    "prettier": "^2.0.5",
-    "solhint": "^3.1.0"
+    "husky": "^4.3.0",
+    "lint-staged": ">=10",
+    "prettier": "^2.1.2",
+    "prettier-plugin-solidity": "^1.0.0-alpha.60",
+    "solhint": "^3.3.2",
+    "solhint-plugin-prettier": "^0.0.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write",
+    "*.{js,ts}": "eslint",
+    "*.{sol}": "npx solhint"
   }
 }
