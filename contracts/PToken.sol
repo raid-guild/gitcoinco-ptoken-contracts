@@ -28,6 +28,18 @@ contract PToken is ERC20UpgradeSafe, OwnableUpgradeSafe {
   event PriceUpdated(address owner, uint256 newPrice);
 
   /**
+   * @dev Modifier that implements transfer restrictions
+   */
+  modifier restricted(address _from, address _to) {
+    // This contract can send tokens to anyone. If the sender is anyone except this contract, the
+    // only allowed recipient is this contract
+    if (_from != address(this)) {
+      require(_to == address(this), "PToken: Invalid recipient");
+    }
+    _;
+  }
+
+  /**
    * @notice Replaces contructor since pTokens are deployed as minimal proxies
    * @param _name Token name
    * @param _symbol Token symbol
@@ -101,5 +113,35 @@ contract PToken is ERC20UpgradeSafe, OwnableUpgradeSafe {
    */
   function burn(uint256 _amount) external onlyOwner {
     _burn(address(this), _amount);
+  }
+
+  /**
+   * @notice Moves `_amount` tokens from the caller's account to the `_to` address
+   * @param _to Address to send pTokens to
+   * @param _amount Amount of pTokens to send
+   */
+  function transfer(address _to, uint256 _amount)
+    public
+    override
+    restricted(msg.sender, _to)
+    returns (bool)
+  {
+    return super.transfer(_to, _amount);
+  }
+
+  /**
+   * @notice Moves `_amount` tokens from `_from` to `_to`, where the `_amount` is then
+   * deducted from the caller's allowance.
+   * @dev Only allows transfer of pTokens between this contract and purchaser
+   * @param _from Address to send pTokens from
+   * @param _to Address to send pTokens to
+   * @param _amount Amount of pTokens to send
+   */
+  function transferFrom(
+    address _from,
+    address _to,
+    uint256 _amount
+  ) public override restricted(_from, _to) returns (bool) {
+    return super.transferFrom(_from, _to, _amount);
   }
 }
