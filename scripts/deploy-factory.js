@@ -1,14 +1,17 @@
-// We require the Buidler Runtime Environment explicitly here. This is optional
+// We require the Hardhat Runtime Environment explicitly here. This is optional
 // but useful for running the script in a standalone fashion through `node <script>`.
-// When running the script with `buidler run <script>` you'll find the Buidler
+//
+// When running the script with `hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const bre = require('@nomiclabs/buidler');
+const hre = require('hardhat');
 
 async function main() {
-  // Buidler always runs the compile task when running scripts through it.
-  // If this runs in a standalone fashion you may want to call compile manually
-  // to make sure everything is compiled
-  // await bre.run('compile');
+  // Hardhat always runs the compile task when running scripts with its command
+  // line interface.
+  //
+  // If this script is run directly using `node` you may want to call compile
+  // manually to make sure everything is compiled
+  // await hre.run('compile');
 
   // We get the contract to deploy
   const PTokenFactoryFactory = await ethers.getContractFactory('PTokenFactory');
@@ -17,7 +20,7 @@ async function main() {
 
   console.log('PTokenFactory deployed to:', PTokenFactory.address);
 
-  if (bre.network.name === 'localhost') {
+  if (hre.network.name === 'hardhat') {
     const MockDAIFactory = await ethers.getContractFactory('MockDAI');
     const MockDAI = await MockDAIFactory.deploy();
     await MockDAI.deployed();
@@ -25,7 +28,7 @@ async function main() {
 
     // Drip the owner one DAI
     await MockDAI.faucet();
-    const owner = await new ethers.Wallet(bre.network.config.accounts[0]);
+    const owner = await new ethers.Wallet(hre.network.config.accounts[0]);
     const balance = await MockDAI.balanceOf(owner.address);
     console.log("Owner's MockDAI balance:", ethers.utils.formatEther(balance));
   }
