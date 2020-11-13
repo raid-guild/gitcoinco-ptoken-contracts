@@ -1,6 +1,6 @@
 require('dotenv').config();
 require('@nomiclabs/hardhat-waffle');
-// require('@nomiclabs/hardhat-etherscan');
+require('@nomiclabs/hardhat-etherscan');
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -26,12 +26,7 @@ module.exports = {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
   networks: {
-    hardhat: {
-      // url: "http://localhost:8545",
-      // accounts: {
-      //   mnemonic: process.env.MNEMONIC_RINKEBY,
-      // },
-    },
+    hardhat: {},
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${process.env.INFURA_ID}`,
       chainId: 4,
