@@ -21,11 +21,19 @@ contract PTokenFactory is ProxyFactory {
     emit PTokenLogicDeployed(address(ptokenLogicContract));
   }
 
+  /**
+   * @notice Creats a pToken for the calleer
+   * @param _name Token name
+   * @param _symbol Token symbol
+   * @param _price Price per token, denominated in _acceptedERC20 units
+   * @param _initialSupply Initial token supply
+   * @param _acceptedERC20 Address of token used to purchase these tokens
+   */
   function createPToken(
     string memory _name,
     string memory _symbol,
-    uint256 _cost,
-    uint256 _supply,
+    uint256 _price,
+    uint256 _initialSupply,
     address _acceptedERC20
   ) public {
     require(address(userPTokens[msg.sender]) == address(0), "PToken: User token already exists");
@@ -36,8 +44,8 @@ contract PTokenFactory is ProxyFactory {
         "initializePtoken(string,string,uint256,uint256,address)",
         _name,
         _symbol,
-        _cost,
-        _supply,
+        _price,
+        _initialSupply,
         _acceptedERC20
       );
     address newPtokenContract = deployMinimal(ptokenLogic, payload);

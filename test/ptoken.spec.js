@@ -139,9 +139,7 @@ describe('PToken', function () {
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneDai);
 
     // Mint tokens as owner, balance should decrease by 1
-    await expect(PToken.connect(owner).mint(oneDai))
-      .to.emit(PToken, 'Minted')
-      .withArgs(owner.address, oneDai);
+    await PToken.connect(owner).mint(oneDai);
     expect(await PToken.balanceOf(PToken.address)).to.eq(twoDai);
   });
 
@@ -155,9 +153,7 @@ describe('PToken', function () {
     expect(await PToken.balanceOf(PToken.address)).to.eq(oneDai);
 
     // Burn tokens as owner, balance should decrease by 1
-    await expect(PToken.connect(owner).burn(oneDai))
-      .to.emit(PToken, 'Burned')
-      .withArgs(owner.address, oneDai);
+    await PToken.connect(owner).burn(oneDai);
     expect(await PToken.balanceOf(PToken.address)).to.eq(0);
   });
 });

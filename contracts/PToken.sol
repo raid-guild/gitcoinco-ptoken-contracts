@@ -9,71 +9,97 @@ contract PToken is ERC20UpgradeSafe, OwnableUpgradeSafe {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
 
-  IERC20 public acceptedToken; // ERC20 that is used for purchasing pToken
-  uint256 public price; // The amount of aToken to purchase pToken
+  /// @notice ERC20 that is used for purchasing pTokens
+  IERC20 public acceptedToken;
 
-  event Initialized(address owner, uint256 price, uint256 supply);
+  /// @notice Price per pToken, denominated in units of `acceptedToken`
+  uint256 public price;
 
-  event Purchased(address buyer, uint256 cost, uint256 amountReceived);
+  /// @dev Emitted when pToken is initialized
+  event Initialized(uint256 price, uint256 supply);
 
-  event Redeemed(address seller, uint256 amountRedeemed);
+  /// @dev Emitted when pTokens are purchased
+  event Purchased(address buyer, uint256 cost, uint256 amount);
 
+  /// @dev Emitted when pTokens are redeemed
+  event Redeemed(address seller, uint256 amount);
+
+  /// @dev Emitted when pToken price is changed
   event PriceUpdated(address owner, uint256 newPrice);
 
-  event Minted(address owner, uint256 amountMinted);
-
-  event Burned(address owner, uint256 amountBurned);
-
+  /**
+   * @notice Replaces contructor since pTokens are deployed as minimal proxies
+   * @param _name Token name
+   * @param _symbol Token symbol
+   * @param _price Price per token, denominated in _acceptedERC20 units
+   * @param _initialSupply Initial token supply
+   * @param _acceptedERC20 Address of token used to purchase these tokens
+   */
   function initializePtoken(
     string memory _name,
     string memory _symbol,
     uint256 _price,
     uint256 _initialSupply,
     address _acceptedERC20
-  ) public initializer {
+  ) external initializer {
+    // Initializers
     __Ownable_init();
     __ERC20_init(_name, _symbol);
+
+    // Set contract state
     acceptedToken = IERC20(_acceptedERC20);
     price = _price;
-    _mint(address(this), _initialSupply);
 
-    emit Initialized(msg.sender, _price, _initialSupply);
+    // Mint initial supply to owner
+    _mint(address(this), _initialSupply);
+    emit Initialized(_price, _initialSupply);
   }
 
-  function purchase(uint256 _amount) public {
+  /**
+   * @notice Purchase pTokens from owner
+   * @param _amount Amount of pTokens to purchase
+   */
+  function purchase(uint256 _amount) external {
     uint256 _allowance = acceptedToken.allowance(msg.sender, address(this));
     uint256 _cost = price.mul(_amount).div(10**18);
     require(_allowance >= _cost, "PToken: Not enough token allowance");
 
     acceptedToken.safeTransferFrom(msg.sender, owner(), _cost);
     require(this.transfer(msg.sender, _amount), "PToken: Transfer during purchase failed");
-
     emit Purchased(msg.sender, _cost, _amount);
   }
 
-  function redeem(uint256 _amount) public {
+  /**
+   * @notice Redeem pTokens
+   * @param _amount Amount of pTokens to redeem
+   */
+  function redeem(uint256 _amount) external {
     require(transfer(address(this), _amount), "PToken: Transfer during redemption failed");
-
     emit Redeemed(msg.sender, _amount);
   }
 
-  function updatePrice(uint256 _newPrice) public onlyOwner {
+  /**
+   * @notice Update purchase price of pTokens
+   * @param _newPrice New pToken price, denominated in _acceptedERC20 units
+   */
+  function updatePrice(uint256 _newPrice) external onlyOwner {
     price = _newPrice;
-
     emit PriceUpdated(msg.sender, _newPrice);
   }
 
-  // Allow only the owner to mint to this pool and not to other accounts
-  function mint(uint256 _amount) public onlyOwner {
+  /**
+   * @notice Allows owner to mint more pTokens to this contract
+   * @param _amount Amount of pTokens to mint
+   */
+  function mint(uint256 _amount) external onlyOwner {
     _mint(address(this), _amount);
-
-    emit Minted(msg.sender, _amount);
   }
 
-  // Allow only the owner to burn from this pool and not other accounts
-  function burn(uint256 _amount) public onlyOwner {
+  /**
+   * @notice Allows owner to burn pTokens from this contract
+   * @param _amount Amount of pTokens to burn
+   */
+  function burn(uint256 _amount) external onlyOwner {
     _burn(address(this), _amount);
-
-    emit Burned(msg.sender, _amount);
   }
 }
