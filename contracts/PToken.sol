@@ -33,9 +33,8 @@ contract PToken is ERC20UpgradeSafe, OwnableUpgradeSafe {
   modifier restricted(address _from, address _to) {
     // This contract can send tokens to anyone. If the sender is anyone except this contract, the
     // only allowed recipient is this contract
-    if (_from != address(this)) {
-      require(_to == address(this), "PToken: Invalid recipient");
-    }
+    bool isToOrFromContract = _from == address(this) || _to == address(this);
+    require(isToOrFromContract, "PToken: Invalid recipient");
     _;
   }
 
