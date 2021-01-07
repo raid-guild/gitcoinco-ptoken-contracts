@@ -41,7 +41,7 @@ module.exports = {
       accounts: {
         mnemonic: process.env.MNEMONIC_MAINNET,
       },
-      gasPrice: 80e9,
+      gasPrice: 100e9,
     },
   },
 };
