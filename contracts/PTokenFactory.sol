@@ -5,7 +5,7 @@ import "./PToken.sol";
 import "./ProxyFactory.sol";
 
 contract PTokenFactory is ProxyFactory {
-  address public immutable ptokenLogic;
+  address public ptokenLogic;
   mapping(address => PToken) public userPTokens;
 
   event PTokenLogicDeployed(address logicAddress);

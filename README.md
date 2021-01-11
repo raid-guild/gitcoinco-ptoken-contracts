@@ -4,7 +4,7 @@ Smart contracts for Gitcoin personal token functionality.
 
 ## Deployed Contracts
 
-The current personal token factory contracts are deployed on Rinkeby at [0xa5c4Fab38a1Ad6847cEF558C112B536c0E3Cc6Ad](https://etherscan.io/address/0xa5c4Fab38a1Ad6847cEF558C112B536c0E3Cc6Ad)
+The personal token factory contract is deployed on mainnet and Rinkeby at [0x358bcf43fe7ec2659aD829F3604c72781fc93a9E](https://etherscan.io/address/0x358bcf43fe7ec2659aD829F3604c72781fc93a9E)
 
 ## Development
 
@@ -18,8 +18,7 @@ To deploy a new factory contract:
 1. Create a file called `.env` with the following contents:
    ```bash
    INFURA_ID=yourInfuraId
-   MNEMONIC_RINKEBY="your mnemonic for development"
-   MNEMONIC_MAINNET="your mnemonic for production"
+   PRIVATE_KEY=yourPrivateKeyForDeployments
    ETHERSCAN_API_KEY=yourEtherscanApiKey
    ```
 2. Open `hardhat.config.js` and configure the object for the network you want to deploy to

@@ -30,18 +30,14 @@ module.exports = {
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${process.env.INFURA_ID}`,
       chainId: 4,
-      accounts: {
-        mnemonic: process.env.MNEMONIC_RINKEBY,
-      },
+      accounts: [process.env.PRIVATE_KEY],
       gasPrice: 1e9,
     },
     mainnet: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
       chainId: 1,
-      accounts: {
-        mnemonic: process.env.MNEMONIC_MAINNET,
-      },
-      gasPrice: 100e9,
+      accounts: [process.env.PRIVATE_KEY],
+      gasPrice: 120e9,
     },
   },
 };
